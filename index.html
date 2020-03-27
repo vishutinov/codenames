@@ -2,12 +2,155 @@
 
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Code names quarantine</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<title>Code names quarantine</title>
+
+	<style type="text/css">
+		.container{
+			display: flex;
+      flex-direction: column;
+      width: 100vw;
+      height: 100vh;
+
+      justify-content: center;
+      align-items: center;
+    }
+
+    .key{
+      margin: 1rem;
+      font-size: 1.5rem;
+    }
+
+    #field{
+     width: 300px;
+     height: 300px;
+     display: grid;
+     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+     grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+     grid-gap: 5px;
+   }
+
+   .first{
+    margin: 1rem;
+   }
+
+   #first{
+    padding: 0.5rem;
+    border-radius: 4px;
+   }
+
+   .sketchy {
+     padding: 4rem;
+     border: 3px solid #333333;
+     font-size: 2.5rem;
+     border-radius: 2% 6% 5% 4% / 1% 1% 2% 4%;
+     text-transform: uppercase;
+     letter-spacing: 0.3ch;
+     background: #ffffff;
+     position: relative;
+   }
+
+   .sketchy::before {
+    content: '';
+    border: 2px solid #353535;
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) scale(1.015) rotate(0.5deg);
+    border-radius: 1% 1% 2% 4% / 2% 6% 5% 4%;
+  }
+
+  .node{
+    border-radius: 4px;
+  }
+
+  .black{
+    background: black;
+  }
+
+  .blue{
+    background: blue;
+  }
+
+  .red {
+    background: red;
+  }
+
+  .innocent{
+    background: yellow;
+  }
+</style>
 </head>
 
 <body>
-  Hi there!
+	<div class="container">
+    <input class="key" placeholder="Enter key here:" type="text" name="key" oninput="generateField(this)">
+    <div class="first">First: <span id="first"></span></div>
+    <div id="field" class="sketchy">
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/seedrandom/3.0.5/seedrandom.min.js"></script>
+  <script type="text/javascript">
+
+    function generateField(input) {
+      var field = [];
+      for(var i=0; i<25; i++){
+        field[i] = i;
+      }
+
+      var colors = [];
+
+      var rand = new Math.seedrandom(input.value);
+
+      var first = (rand() >= 0.5) ? 'red' : 'blue';
+      var second = (first === 'red') ? 'blue' : 'red';
+
+      generateRand(field, colors, rand, 24, 'black');
+
+      var top = 23;
+      for(var i=0; i < 9; i++, top--){
+        generateRand(field, colors, rand, top, first);
+      }
+
+      for(var i=0; i < 8; i++, top--){
+        generateRand(field, colors, rand, top, second);
+      }
+
+      for(var i=0; i < 7; i++, top--){
+        generateRand(field, colors, rand, top, 'innocent');
+      }
+
+      // -----------------------------
+      var firstHtml = document.getElementById('first');
+      firstHtml.setAttribute('class', first);              
+      firstHtml.innerHTML = first;
+
+      var fieldHtml = document.getElementById('field');
+      fieldHtml.innerHTML = '';
+
+      for(var i=0; i < 25; i++){
+        var node = document.createElement("div");   
+        node.setAttribute('class', 'node '+ colors[i]);              
+
+        fieldHtml.appendChild(node);
+      }
+    }
+
+    function generateRand(field, colors, rand, top, color){
+      var index = Math.floor( rand() * top );
+      colors[field[index]] = color;
+      field[index] = field[top];
+      field[top] = 0;
+    }
+
+
+  </script>>
 </body>
 
 </html>
